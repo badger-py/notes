@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -12,13 +12,20 @@ class UserSchema(BaseModel):
         orm_mode = True
 
 
-class NoteSchema(BaseModel):
-    id: int
+class NoteInSchema(BaseModel):
     title: str = "New note"
     text: str
     owner_id: int
 
+
+class NoteSchema(NoteInSchema):
+    id: int
     owner: UserSchema
 
     class Config:
         orm_mode = True
+
+class NoteUpdateSchema(BaseModel):
+    title: Optional[str]
+    text: Optional[str]
+    owner_id: Optional[int]

@@ -1,10 +1,11 @@
-from datetime import utcnow
+from datetime import datetime
 
-from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String, Text,
-                        relationship)
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, TypeDecorator
 from sqlalchemy.orm import relationship
 
-from .db import Base
+from schemas import NoteSchema
+
+from db import Base
 
 
 class User(Base):
@@ -12,9 +13,9 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(25))
-    last_been_online = Column(DateTime, default=utcnow)
-    
-    notes = relationship('Note', bacref='owner')
+    last_been_online = Column(DateTime, default=datetime.utcnow)
+
+    # notes: List[Note]
 
 
 class Note(Base):
@@ -25,4 +26,7 @@ class Note(Base):
     text = Column(Text, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("User", backref="notes")
+    owner = relationship("User", backref="notes", foreign_keys=[owner_id])
+
+    def to_model(self) -> NoteSchema:
+        return NoteSchema.from_orm(self)
