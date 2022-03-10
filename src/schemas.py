@@ -3,13 +3,19 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class UserSchema(BaseModel):
-    id: int
+class UserInSchema(BaseModel):
     name: str
     last_been_online: datetime
 
+
+class UserSchema(UserInSchema):
+    id: int
+
     class Config:
         orm_mode = True
+
+class UserUpdateSchema(BaseModel):
+    pass
 
 
 class NoteInSchema(BaseModel):
@@ -24,6 +30,7 @@ class NoteSchema(NoteInSchema):
 
     class Config:
         orm_mode = True
+
 
 class NoteUpdateSchema(BaseModel):
     title: Optional[str]
