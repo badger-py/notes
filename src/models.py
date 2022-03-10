@@ -27,6 +27,3 @@ class Note(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", backref="notes", foreign_keys=[owner_id])
-
-    def to_model(self) -> NoteSchema:
-        return NoteSchema.from_orm(self)

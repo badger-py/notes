@@ -18,14 +18,14 @@ async def get_all_notes_router(db: Session = Depends(get_db), offset: int = 0, l
     return await get_all_notes(db)
 
 
-@notes_endpoint.put('/create')
+@notes_endpoint.post('/')
 async def create_note_router(note: NoteInSchema, db: Session = Depends(get_db)) -> NoteSchema:
     try:
         return await create_note(note, db)
     except sqlalchemy.exc.IntegrityError as exc:
         raise HTTPException(400)
 
-@notes_endpoint.delete('/delete/{id}')
+@notes_endpoint.delete('/{id}')
 def delete_note_router(id: int, db: Session = Depends(get_db)):
     try:
         delete_note(id=id, db=db)
@@ -34,7 +34,7 @@ def delete_note_router(id: int, db: Session = Depends(get_db)):
     
     return {"ok":True}
 
-@notes_endpoint.put('/update/{id}')
+@notes_endpoint.put('/{id}')
 def update_note_router(id: int, note_to_update: NoteUpdateSchema, db: Session = Depends(get_db)):
     try:
         update_note(id=id, note=note_to_update, db=db)

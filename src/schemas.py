@@ -5,17 +5,18 @@ from pydantic import BaseModel
 
 class UserInSchema(BaseModel):
     name: str
-    last_been_online: datetime
 
 
 class UserSchema(UserInSchema):
+    """User out schema"""
     id: int
+    last_been_online: datetime
 
     class Config:
         orm_mode = True
 
 class UserUpdateSchema(BaseModel):
-    pass
+    name: str
 
 
 class NoteInSchema(BaseModel):

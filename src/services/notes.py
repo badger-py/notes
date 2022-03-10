@@ -16,7 +16,7 @@ async def get_all_notes(db: Session, offset: int = 0, limit: int = 15) -> List[s
     Returns:
         List[schemas.NoteSchema]: list of notes
     """
-    return [i.to_model() for i in db.query(models.Note).offset(offset).limit(limit).all()]
+    return [schemas.NoteSchema.from_orm(i) for i in db.query(models.Note).offset(offset).limit(limit).all()]
 
 
 async def create_note(note: schemas.NoteInSchema, db: Session) -> schemas.NoteSchema:
