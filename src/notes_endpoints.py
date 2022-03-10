@@ -13,19 +13,18 @@ notes_endpoint = APIRouter(
 )
 
 
-@notes_endpoint.get('/')
+@notes_endpoint.get('/', response_model=List[NoteSchema],tags=["notes"])
 async def get_all_notes_router(db: Session = Depends(get_db), offset: int = 0, limit: int = 15) -> List[NoteSchema]:
-    return await get_all_notes(db)
+    return await get_all_notes(db, offset=offset, limit=limit)
 
-
-@notes_endpoint.post('/')
+@notes_endpoint.post('/', response_model=NoteSchema, tags=["notes"])
 async def create_note_router(note: NoteInSchema, db: Session = Depends(get_db)) -> NoteSchema:
     try:
         return await create_note(note, db)
     except sqlalchemy.exc.IntegrityError as exc:
         raise HTTPException(400)
 
-@notes_endpoint.delete('/{id}')
+@notes_endpoint.delete('/{id}', tags=["notes"])
 def delete_note_router(id: int, db: Session = Depends(get_db)):
     try:
         delete_note(id=id, db=db)
@@ -34,11 +33,11 @@ def delete_note_router(id: int, db: Session = Depends(get_db)):
     
     return {"ok":True}
 
-@notes_endpoint.put('/{id}')
+@notes_endpoint.put('/{id}', response_model=NoteSchema, tags=["notes"])
 def update_note_router(id: int, note_to_update: NoteUpdateSchema, db: Session = Depends(get_db)):
     try:
-        update_note(id=id, note=note_to_update, db=db)
+        updated_note = update_note(id=id, note=note_to_update, db=db)
     except IndexError:
         raise HTTPException(404, "Note not found")
     
-    return {"ok":True}
+    return updated_note
