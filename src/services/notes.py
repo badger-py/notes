@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 import models
 import schemas
+from exceptions import AccessDenied
 
 
 async def get_all_notes(db: Session, offset: int = 0, limit: int = 15) -> List[schemas.NoteSchema]:
@@ -19,11 +20,12 @@ async def get_all_notes(db: Session, offset: int = 0, limit: int = 15) -> List[s
     return [schemas.NoteSchema.from_orm(i) for i in db.query(models.Note).offset(offset).limit(limit).all()]
 
 
-async def create_note(note: schemas.NoteInSchema, db: Session) -> schemas.NoteSchema:
+async def create_note(note: schemas.NoteInSchema, user_id: int, db: Session) -> schemas.NoteSchema:
     """Create new note
 
     Args:
         note (schemas.NoteInSchema): note as pydantic schema
+        user_id (int): id of note's creater
         db (Session): db connection
 
     Returns:
@@ -32,7 +34,7 @@ async def create_note(note: schemas.NoteInSchema, db: Session) -> schemas.NoteSc
     new_note = models.Note(
         title=note.title,
         text=note.text,
-        owner_id=note.owner_id
+        owner_id=user_id
     )
     db.add(new_note)
     db.commit()
@@ -41,11 +43,12 @@ async def create_note(note: schemas.NoteInSchema, db: Session) -> schemas.NoteSc
     return schemas.NoteSchema.from_orm(new_note)
 
 
-def delete_note(id: int, db: Session) -> None:
+def delete_note(id: int, user_id: int, db: Session) -> None:
     """Delete note by id
 
     Args:
         id (int): id of note
+        user_id (int): if of user
         db (Session): connection to db
 
     Raises:
@@ -55,16 +58,22 @@ def delete_note(id: int, db: Session) -> None:
 
     if note_to_delete is None:
         raise IndexError('Note not found')
+    
+    if user_id != note_to_delete.owner_id:
+        raise AccessDenied
 
     db.delete(note_to_delete)
     db.commit()
 
 
-def update_note(id: int, note: schemas.NoteUpdateSchema, db: Session) -> schemas.NoteSchema:
+def update_note(id: int, note: schemas.NoteUpdateSchema, user_id: int, db: Session) -> schemas.NoteSchema:
     note_to_update = db.query(models.Note).filter_by(id=id).first()
 
     if note_to_update is None:
         raise IndexError('Note not found')
+    
+    if user_id != note_to_update.owner_id:
+        raise AccessDenied
 
     data = note.dict(exclude_unset=True)
     for key, value in data.items():

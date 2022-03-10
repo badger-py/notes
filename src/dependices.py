@@ -1,7 +1,14 @@
+from fastapi import Header
+
 from db import SessionLocal
 
 
-# Dependency
+# Dependencies:
+
+# auth header
+auth_header = Header(None, alias="Authorization")
+
+
 def get_db():
     db = SessionLocal()
     try:

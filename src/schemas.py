@@ -22,7 +22,6 @@ class UserUpdateSchema(BaseModel):
 class NoteInSchema(BaseModel):
     title: str = "New note"
     text: str
-    owner_id: int
 
 
 class NoteSchema(NoteInSchema):
@@ -38,4 +37,3 @@ class NoteSchema(NoteInSchema):
 class NoteUpdateSchema(BaseModel):
     title: Optional[str]
     text: Optional[str]
-    owner_id: Optional[int]

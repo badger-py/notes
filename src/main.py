@@ -11,6 +11,9 @@ app = FastAPI(title="Notes app API")
 app.include_router(notes_endpoint)
 app.include_router(users_enpoint)
 
+auth_header = Header(None, alias="Authorization")
+
+
 @app.get('/test')
-def test():
-    return str(Header("Authorization"))
+def test(user_id: int = auth_header):
+    return {"Authorization": user_id}
