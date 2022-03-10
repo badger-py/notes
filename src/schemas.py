@@ -10,10 +10,10 @@ class UserInSchema(BaseModel):
 class UserSchema(UserInSchema):
     """User out schema"""
     id: int
-    last_been_online: datetime
 
     class Config:
         orm_mode = True
+
 
 class UserUpdateSchema(BaseModel):
     name: str
@@ -26,7 +26,9 @@ class NoteInSchema(BaseModel):
 
 
 class NoteSchema(NoteInSchema):
+    """Note out model"""
     id: int
+    published_at: datetime
     owner: UserSchema
 
     class Config:

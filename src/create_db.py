@@ -4,7 +4,7 @@ from models import User, Note
 from config import users, crate_test_notes
 
 # create tables
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 with SessionLocal() as db:
 
@@ -12,7 +12,7 @@ with SessionLocal() as db:
 
     # create users from config
     for user_name in users:
-        user = User(name=user_name, last_been_online=None)
+        user = User(name=user_name)
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -26,5 +26,5 @@ with SessionLocal() as db:
         db.commit()
         db.refresh(note)
 
-
+db.close()
 print("db was creates sucesfully")
