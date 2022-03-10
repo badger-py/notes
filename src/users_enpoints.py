@@ -39,8 +39,8 @@ def delete_user_router(id: int, db: Session = Depends(get_db)):
 @users_enpoint.put('/{id}', response_model=UserSchema, tags=["users"])
 def update_user_router(id: int, user_to_update: UserUpdateSchema, db: Session = Depends(get_db)):
     try:
-        update_user(id=id, user=user_to_update, db=db)
+        updated_user = update_user(id=id, user=user_to_update, db=db)
     except IndexError:
         raise HTTPException(404, "Note not found")
     
-    return {"ok":True}
+    return updated_user
