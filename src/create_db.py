@@ -1,11 +1,14 @@
 from db import Base, SessionLocal, engine
 from models import User, Note
 
-from config import users, crate_test_notes
+# from config import users, crate_test_notes
 
 # create tables
 Base.metadata.create_all(bind=engine)
+print("db was creates sucesfully")
 
+
+"""
 with SessionLocal() as db:
 
     created_users = []
@@ -27,4 +30,4 @@ with SessionLocal() as db:
         db.refresh(note)
 
 db.close()
-print("db was creates sucesfully")
+"""
