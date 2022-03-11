@@ -19,6 +19,21 @@ async def get_all_notes(db: Session, offset: int = 0, limit: int = 15) -> List[s
     """
     return [schemas.NoteSchema.from_orm(i) for i in db.query(models.Note).offset(offset).limit(limit).all()]
 
+async def get_some_note(id: int, db: Session) -> schemas.NoteSchema:
+    """Get note by id
+
+    Args:
+        id (int): id of note
+        db (Session): db connction
+
+    Returns:
+        schemas.NoteSchema: note
+    """
+    note = db.query(models.Note).filter_by(id=id).first()
+    if note is None:
+        raise IndexError('Note not found')
+    
+    return schemas.NoteSchema.from_orm(note)
 
 async def create_note(note: schemas.NoteInSchema, user_id: int, db: Session) -> schemas.NoteSchema:
     """Create new note

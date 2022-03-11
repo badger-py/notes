@@ -20,21 +20,19 @@ async def get_all_users_router(db: Session = Depends(get_db)) -> List[UserSchema
 async def get_user_router(id: int, db: Session = Depends(get_db)) -> UserSchema:
     return await get_user(id, db)
 
-@users_enpoint.post('/', response_model=UserSchema, tags=["users"])
+@users_enpoint.post('/', status_code=201, response_model=UserSchema, tags=["users"])
 async def create_user_router(user: UserInSchema, db: Session = Depends(get_db)) -> UserSchema:
     try:
         return await create_user(user, db)
     except sqlalchemy.exc.IntegrityError as exc:
         raise HTTPException(400)
 
-@users_enpoint.delete('/{id}', tags=["users"])
+@users_enpoint.delete('/{id}', status_code=204, tags=["users"])
 def delete_user_router(id: int, db: Session = Depends(get_db)):
     try:
         delete_user(id=id, db=db)
     except IndexError:
         raise HTTPException(404, "Note not found")
-    
-    return {"ok":True}
 
 @users_enpoint.put('/{id}', response_model=UserSchema, tags=["users"])
 def update_user_router(id: int, user_to_update: UserUpdateSchema, db: Session = Depends(get_db)):
